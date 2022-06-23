@@ -12,7 +12,26 @@ module.exports.getUsersId = (req, res) => {
 };
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
+  console.log(req.body);
   User.create({ name, about, avatar })
+    .then((user) => res.send({ data: user }))
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+module.exports.updateUser = (req, res) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name: req.body.name, about: req.body.about },
+    { new: true },
+  )
+    .then((user) => res.send({ data: user }))
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+module.exports.updateAvatar = (req, res) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar: req.body.avatar },
+    { new: true },
+  )
     .then((user) => res.send({ data: user }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
