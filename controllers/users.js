@@ -37,9 +37,11 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'Validation')
-    }
-    res.status(500).send({ message: 'Произошла ошибка' }));
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка валидации данных' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' })
+    });
 };
 module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(
@@ -48,7 +50,12 @@ module.exports.updateUser = (req, res) => {
     { new: true },
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка валидации данных' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
