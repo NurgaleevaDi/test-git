@@ -22,7 +22,7 @@ module.exports.getUsersId = (req, res) => {
         res.status(404).send({ message: 'Пользователь по указанному id не найден'});
         return;
       }
-      res.send({ data: user });
+      res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -36,7 +36,10 @@ module.exports.createUser = (req, res) => {
   console.log(req.body);
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'Validation')
+    }
+    res.status(500).send({ message: 'Произошла ошибка' }));
 };
 module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(
