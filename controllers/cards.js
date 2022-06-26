@@ -15,7 +15,7 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка валидации данных' });
+        return res.status(400).send({ message: `Ошибка валидации: ${err._message}` });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
     });
