@@ -41,7 +41,7 @@ module.exports.updateUser = (req, res) => {
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
       }
       return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
@@ -54,5 +54,10 @@ module.exports.updateAvatar = (req, res) => {
     { new: true },
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
+      }
+      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+    });
 };
