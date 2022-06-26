@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { ERROR_NOT_FOUND } = require('./errors');
 
 const app = express();
 const PORT = 3000;
@@ -21,9 +22,10 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Запрашиваемая страница не существует' });
+  res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не существует' });
 });
 
 app.listen(PORT, () => {
-  // console.log('App started and listen port', PORT);
+  // eslint-disable-next-line no-console
+  console.log('App started and listen port', PORT);
 });

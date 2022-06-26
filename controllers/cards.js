@@ -9,14 +9,13 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  const likes = [];
   Card.create({
-    name, link, owner, likes,
+    name, link, owner,
   })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_BAD_REQUEST).send({ message: `Ошибка валидации: ${err._message}` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Ошибка валидации: ${err}` });
       }
       return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });

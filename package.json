@@ -1,7 +1,7 @@
 {
   "name": "express-mesto-gha_new",
   "version": "1.0.0",
-  "description": "",
+  "description": "Проект Mesto фронтенд + бэкенд",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
