@@ -1,24 +1,25 @@
+const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_SERVER } = require('../errors');
 const User = require('../models/users');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' }));
 };
 module.exports.getUsersId = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'Пользователь по указанному id не найден' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному id не найден' });
         return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Ошибка ввода данных' });
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка ввода данных' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
 module.exports.createUser = (req, res) => {
@@ -27,9 +28,9 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка валидации данных' });
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
 module.exports.updateUser = (req, res) => {
@@ -41,9 +42,9 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка валидации данных' });
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
 module.exports.updateAvatar = (req, res) => {
@@ -53,5 +54,5 @@ module.exports.updateAvatar = (req, res) => {
     { new: true },
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' }));
 };
