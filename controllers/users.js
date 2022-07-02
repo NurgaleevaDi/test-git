@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const {
   ERROR_BAD_REQUEST,
   ERROR_NOT_FOUND,
@@ -8,6 +9,7 @@ const {
 const User = require('../models/users');
 
 const SALT_ROUNDS = 10;
+const SECRET_KEY = 'very_secret';
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -87,16 +89,21 @@ module.exports.login = (req, res) => {
         err.statusCode = 403;
         throw err;
       }
-      return bcrypt.compare(password, user.password);
+      return Promise.all([
+        user,
+        bcrypt.compare(password, user.password),
+      ]);
     })
-    .then((isPasswordCorrect) => {
+    .then(([user, isPasswordCorrect]) => {
       if (!isPasswordCorrect) {
         const err = new Error('Неправильный email или password');
         err.statusCode = 403;
         throw err;
       }
-
-      return res.send({ message: 'ok' });
+      return jwt.sign({ email: user.email }, SECRET_KEY, { expiresIn: '7d' });
+    })
+    .then((token) => {
+      res.send({ token });
     })
     .catch((err) => {
       if (err.statusCode === 403) {
