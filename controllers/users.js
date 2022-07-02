@@ -1,5 +1,13 @@
-const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_SERVER } = require('../errors');
+const bcrypt = require('bcrypt');
+const {
+  ERROR_BAD_REQUEST,
+  ERROR_NOT_FOUND,
+  ERROR_SERVER,
+  MONGO_DUPLICATE_ERROR,
+} = require('../errors');
 const User = require('../models/users');
+
+const SALT_ROUNDS = 10;
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -22,16 +30,47 @@ module.exports.getUsersId = (req, res) => {
       return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
+module.exports.login = (req, res) => {
+  return res.send({messsage: 'login'});
+}
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+  // return res.send({ message: 'createUser' });
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  if (!email || !password) {
+    return res.status(400).send({ message: 'Не передан email или password' });
+  }
+  bcrypt
+    .hash(password, SALT_ROUNDS)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then(() => {
+      res.send({ message: 'Пользователь создан' });
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_BAD_REQUEST).send({ message: `Ошибка ${err}` });
+      if (err.code === MONGO_DUPLICATE_ERROR) {
+        return res.status(409).send({ meaasage: 'Email уже используется' });
       }
+
       return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
+
+  // User.create({
+  //   name, about, avatar, email, password,
+  // })
+  //   .then((user) => res.send({ data: user }))
+  //   .catch((err) => {
+  //     if (err.name === 'ValidationError') {
+  //       return res.status(ERROR_BAD_REQUEST).send({ message: `Ошибка ${err}` });
+  //     }
+  //     return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+  //   });
 };
 module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(
