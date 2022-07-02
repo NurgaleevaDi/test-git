@@ -30,13 +30,14 @@ module.exports.getUsersId = (req, res) => {
       return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
-module.exports.login = (req, res) => {
-  return res.send({messsage: 'login'});
-}
+
 module.exports.createUser = (req, res) => {
-  // return res.send({ message: 'createUser' });
   const {
-    name, about, avatar, email, password,
+    name,
+    about,
+    avatar,
+    email,
+    password,
   } = req.body;
   if (!email || !password) {
     return res.status(400).send({ message: 'Не передан email или password' });
@@ -71,6 +72,38 @@ module.exports.createUser = (req, res) => {
   //     }
   //     return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
   //   });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).send({ message: 'Не передан email или password' });
+  }
+  User
+    .findOne({ email })
+    .then((user) => {
+      if (!user) {
+        const err = new Error('Неправильный email или password');
+        err.statusCode = 403;
+        throw err;
+      }
+      return bcrypt.compare(password, user.password);
+    })
+    .then((isPasswordCorrect) => {
+      if (!isPasswordCorrect) {
+        const err = new Error('Неправильный email или password');
+        err.statusCode = 403;
+        throw err;
+      }
+
+      return res.send({ message: 'ok' });
+    })
+    .catch((err) => {
+      if (err.statusCode === 403) {
+        return res.status(403).send({ message: err.message });
+      }
+      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+    });
 };
 module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(
