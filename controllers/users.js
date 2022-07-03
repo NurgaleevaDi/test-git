@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const {
   ERROR_BAD_REQUEST,
   ERROR_NOT_FOUND,
@@ -7,11 +6,12 @@ const {
   MONGO_DUPLICATE_ERROR,
 } = require('../errors');
 const User = require('../models/users');
+const { generateToken } = require('../helpers/jwt');
 
 const SALT_ROUNDS = 10;
-const SECRET_KEY = 'very_secret';
 
 module.exports.getUsers = (req, res) => {
+  console.log('ID: ', req.user.id);
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' }));
@@ -100,7 +100,7 @@ module.exports.login = (req, res) => {
         err.statusCode = 403;
         throw err;
       }
-      return jwt.sign({ email: user.email }, SECRET_KEY, { expiresIn: '7d' });
+      return generateToken({ email: user.email });
     })
     .then((token) => {
       res.send({ token });
