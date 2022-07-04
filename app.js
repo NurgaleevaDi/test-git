@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { ERROR_NOT_FOUND } = require('./errors');
+const { ERROR_NOT_FOUND, ERROR_SERVER } = require('./errors');
 
 const app = express();
 const PORT = 3000;
@@ -31,6 +31,15 @@ app.post('/signup', createUser);
 
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не существует' });
+});
+
+app.use((err, req, res, next) => {
+  console.log('ERR ', err);
+  if (err.statusCode) {
+    return res.status(err.statusCode).send({ message: err.message });
+  }
+  console.error(err.stack);
+  return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
 });
 
 app.listen(PORT, () => {

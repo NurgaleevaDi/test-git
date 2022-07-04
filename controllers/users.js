@@ -2,8 +2,10 @@ const bcrypt = require('bcrypt');
 const {
   ERROR_BAD_REQUEST,
   ERROR_NOT_FOUND,
+  ERROR_CONFLICT,
   ERROR_SERVER,
   MONGO_DUPLICATE_ERROR,
+  ERROR_FORBIDDEN,
 } = require('../errors');
 const User = require('../models/users');
 const { generateToken } = require('../helpers/jwt');
@@ -42,7 +44,10 @@ module.exports.createUser = (req, res) => {
     password,
   } = req.body;
   if (!email || !password) {
-    return res.status(400).send({ message: 'Не передан email или password' });
+    const error = new Error('Не передан email или password');
+    error.statusCode = ERROR_BAD_REQUEST;
+    throw error;
+    // return res.status(400).send({ message: 'Не передан email или password' });
   }
   bcrypt
     .hash(password, SALT_ROUNDS)
@@ -58,9 +63,12 @@ module.exports.createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_ERROR) {
-        return res.status(409).send({ meaasage: 'Email уже используется' });
+        // const error = new Error('Email уже используется');
+        // error.statusCode = ERROR_CONFLICT;
+        // throw error;
+        return res.status(ERROR_CONFLICT).send({ meaasage: 'Email уже используется' });
       }
-
+      // throw err;
       return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 
@@ -86,7 +94,7 @@ module.exports.login = (req, res) => {
     .then((user) => {
       if (!user) {
         const err = new Error('Неправильный email или password');
-        err.statusCode = 403;
+        err.statusCode = ERROR_FORBIDDEN;
         throw err;
       }
       return Promise.all([
@@ -97,7 +105,7 @@ module.exports.login = (req, res) => {
     .then(([user, isPasswordCorrect]) => {
       if (!isPasswordCorrect) {
         const err = new Error('Неправильный email или password');
-        err.statusCode = 403;
+        err.statusCode = ERROR_FORBIDDEN;
         throw err;
       }
       return generateToken({ email: user.email });

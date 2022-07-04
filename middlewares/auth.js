@@ -1,10 +1,15 @@
 const User = require('../models/users');
 const { checkToken } = require('../helpers/jwt');
 
+const throwUnathorizedError = () => {
+  const error = new Error('Авторизуйтесь');
+  error.statusCode = 401;
+  throw error;
+};
 const auth = (req, res, next) => {
   const isAutorized = req.headers.authorization;
   if (!isAutorized) {
-    return res.status(401).send({ message: 'Авторизуйтесь' });
+    throwUnathorizedError();
   }
 
   const token = isAutorized.replace('Bearer ', '');
@@ -13,14 +18,14 @@ const auth = (req, res, next) => {
     User.findOne({ email: payload.email })
       .then((user) => {
         if (!user) {
-          return res.status(401).send({ message: 'Авторизуйтесь' });
+          throwUnathorizedError();
         }
         req.user = { id: user.id };
         next();
-      })
-      .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+      });
+    // .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
   } catch (err) {
-    return res.status(401).send({ message: 'Авторизуйтесь' });
+    throwUnathorizedError();
   }
 };
 
