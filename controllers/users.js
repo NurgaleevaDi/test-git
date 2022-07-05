@@ -181,10 +181,12 @@ module.exports.updateUser = (req, res, next) => {
     });
 };
 module.exports.updateAvatar = (req, res, next) => {
+  console.log(req.user._id);
   User.findByIdAndUpdate(
+
     req.user._id,
     { avatar: req.body.avatar },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (!user) {
@@ -195,6 +197,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Некорректные данные'));
+        return;
         // return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
       }
       next(err);
