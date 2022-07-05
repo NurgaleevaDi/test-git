@@ -2,11 +2,6 @@ const Card = require('../models/cards');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
 const BadRequestError = require('../errors/bad-request-error');
-// const {
-//   ERROR_NOT_FOUND,
-//   ERROR_BAD_REQUEST,
-//   ERROR_SERVER,
-// } = require('../errors');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -52,8 +47,6 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
-        // res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-        // return;
       }
       res.send({ data: card });
     })
@@ -61,10 +54,8 @@ module.exports.likeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Ошибка ввода данных'));
         return;
-        // return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка ввода данных' });
       }
       next(err);
-      // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -77,8 +68,6 @@ module.exports.dislikeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
-        // res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-        // return;
       }
       res.send({ data: card });
     })
@@ -86,9 +75,7 @@ module.exports.dislikeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Ошибка ввода данных'));
         return;
-        // return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка ввода данных' });
       }
       next(err);
-      // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };

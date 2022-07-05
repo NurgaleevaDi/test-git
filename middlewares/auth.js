@@ -24,7 +24,6 @@ const auth = (req, res, next) => {
         req.user = { id: user.id };
         next();
       });
-    // .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
   } catch (err) {
     throwUnathorizedError();
   }

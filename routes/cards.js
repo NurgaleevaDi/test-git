@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-// const Card = require('../models/cards');
 const {
   getCards,
   createCard,
