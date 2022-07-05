@@ -13,6 +13,7 @@ const {
 const User = require('../models/users');
 const { generateToken } = require('../helpers/jwt');
 const ConflictError = require('../errors/conflict-error');
+const Unauthorized = require('../errors/unauthorized');
 
 const SALT_ROUNDS = 10;
 
@@ -70,7 +71,6 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      console.log(user);
       res.send({
         name: user.name,
         about: user.about,
@@ -108,7 +108,7 @@ module.exports.createUser = (req, res, next) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new BadRequestError('Не передан email или password');
+    throw new Unauthorized('Не передан email или password');
     // return res.status(400).send({ message: 'Не передан email или password' });
   }
   User
