@@ -164,7 +164,7 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name: req.body.name, about: req.body.about },
@@ -173,12 +173,14 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
+        next(new BadRequestError('Некорректные данные'));
+        // return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
       }
-      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+      next(err);
+      // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar: req.body.avatar },
@@ -187,8 +189,10 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
+        next(new BadRequestError('Некорректные данные'));
+        // return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
       }
-      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+      next(err);
+      // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
