@@ -34,12 +34,13 @@ module.exports.getUser = (req, res, next) => {
     })
     .catch(next);
 };
-module.exports.getUsersId = (req, res) => {
+module.exports.getUsersId = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному id не найден' });
-        return;
+        throw new NotFoundError('Пользователь по указанному id не найден');
+        // res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному id не найден' });
+        // return;
       }
       // console.log(user);
       res.send({
@@ -52,9 +53,12 @@ module.exports.getUsersId = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка ввода данных' });
+        next(new BadRequestError('Ошибка ввода данных'));
+        return;
+        // return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка ввода данных' });
       }
-      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+      next(err);
+      // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
 
