@@ -1,19 +1,19 @@
 const Card = require('../models/cards');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
-// const BadRequestError = require('../errors/bad-request-error');
+const BadRequestError = require('../errors/bad-request-error');
 const {
   ERROR_NOT_FOUND,
   ERROR_BAD_REQUEST,
   ERROR_SERVER,
 } = require('../errors');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user.id;
   Card.create({
@@ -22,9 +22,12 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_BAD_REQUEST).send({ message: `Ошибка валидации: ${err}` });
+        next(new BadRequestError(`Ошибка валидации: ${err}`));
+        return;
+        // return res.status(ERROR_BAD_REQUEST).send({ message: `Ошибка валидации: ${err}` });
       }
-      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+      next(err);
+      // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
 module.exports.deleteCard = (req, res, next) => {
