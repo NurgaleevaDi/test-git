@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const { ERROR_NOT_FOUND } = require('./errors');
 
 const app = express();
@@ -33,10 +34,11 @@ app.post('/signup', createUser);
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не существует' });
 });
+
+app.use(errors());
 // централизованная обработка ошибок
 /* eslint-disable-next-line */
 app.use((err, req, res, next) => {
-  console.log('ERROR: ', err.statusCode);
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;
   res
