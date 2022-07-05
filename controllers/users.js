@@ -105,7 +105,7 @@ module.exports.createUser = (req, res, next) => {
   //   });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     throw new Unauthorized('Не передан email или password');
@@ -116,7 +116,7 @@ module.exports.login = (req, res) => {
     .select('+password')
     .then((user) => {
       if (!user) {
-        throw new BadRequestError('Не передан email или password');
+        throw new Unauthorized('Не передан email или password');
         // const err = new Error('Неправильный email или password');
         // err.statusCode = ERROR_FORBIDDEN;
         // throw err;
@@ -128,7 +128,7 @@ module.exports.login = (req, res) => {
     })
     .then(([user, isPasswordCorrect]) => {
       if (!isPasswordCorrect) {
-        throw new BadRequestError('Не передан email или password');
+        throw new Unauthorized('Не передан email или password');
         // const err = new Error('Неправильный email или password');
         // err.statusCode = ERROR_FORBIDDEN;
         // throw err;
@@ -140,9 +140,11 @@ module.exports.login = (req, res) => {
     })
     .catch((err) => {
       if (err.statusCode === 403) {
-        return res.status(403).send({ message: err.message });
+        next(new ForbiddenError('Необходимо авторизоваться'))
+        // return res.status(403).send({ message: err.message });
       }
-      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+      next(err);
+      // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
 
