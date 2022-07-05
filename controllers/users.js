@@ -18,21 +18,18 @@ const Unauthorized = require('../errors/unauthorized');
 const SALT_ROUNDS = 10;
 
 module.exports.getUsers = (req, res, next) => {
-  console.log(req);
   // console.log('ID: ', req.user.id);
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(next);
 };
 module.exports.getUser = (req, res, next) => {
-  console.log(req);
   User.findById(req.user.id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      console.log(res);
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch(next);
 };
