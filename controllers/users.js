@@ -3,12 +3,12 @@ const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
 const BadRequestError = require('../errors/bad-request-error');
 const {
-  ERROR_BAD_REQUEST,
-  ERROR_NOT_FOUND,
-  ERROR_CONFLICT,
-  ERROR_SERVER,
+  // ERROR_BAD_REQUEST,
+  // ERROR_NOT_FOUND,
+  // ERROR_CONFLICT,
+  // ERROR_SERVER,
   MONGO_DUPLICATE_ERROR,
-  ERROR_FORBIDDEN,
+  // ERROR_FORBIDDEN,
 } = require('../errors');
 const User = require('../models/users');
 const { generateToken } = require('../helpers/jwt');
@@ -156,7 +156,7 @@ module.exports.login = (req, res, next) => {
     })
     .catch((err) => {
       if (err.statusCode === 403) {
-        next(new ForbiddenError('Необходимо авторизоваться'))
+        next(new ForbiddenError('Необходимо авторизоваться'));
         // return res.status(403).send({ message: err.message });
       }
       next(err);
