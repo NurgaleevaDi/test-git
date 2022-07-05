@@ -12,6 +12,7 @@ const {
 } = require('../errors');
 const User = require('../models/users');
 const { generateToken } = require('../helpers/jwt');
+const ConflictError = require('../errors/conflict-error');
 
 const SALT_ROUNDS = 10;
 
@@ -76,7 +77,9 @@ module.exports.createUser = (req, res, next) => {
         // const error = new Error('Email уже используется');
         // error.statusCode = ERROR_CONFLICT;
         // throw error;
-        return res.status(ERROR_CONFLICT).send({ meaasage: 'Email уже используется' });
+        next(new ConflictError('Email уже используется'));
+        return;
+        // return res.status(ERROR_CONFLICT).send({ meaasage: 'Email уже используется' });
       }
       // throw err;
       // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
