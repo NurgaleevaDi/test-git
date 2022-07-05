@@ -18,18 +18,20 @@ const Unauthorized = require('../errors/unauthorized');
 const SALT_ROUNDS = 10;
 
 module.exports.getUsers = (req, res, next) => {
+  console.log(req);
   // console.log('ID: ', req.user.id);
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(next);
 };
 module.exports.getUser = (req, res, next) => {
-  // console.log('User');
-  User.findById(req.user._id)
+  console.log(req);
+  User.findById(req.user.id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
+      console.log(res);
       res.status(200).send(user);
     })
     .catch(next);
@@ -166,7 +168,7 @@ module.exports.login = (req, res, next) => {
 
 module.exports.updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
-    req.user._id,
+    req.user.id,
     { name: req.body.name, about: req.body.about },
     { new: true, runValidators: true },
   )
@@ -182,7 +184,7 @@ module.exports.updateUser = (req, res, next) => {
 };
 module.exports.updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
-    req.user._id,
+    req.user.id,
     { avatar: req.body.avatar },
     { new: true, runValidators: true },
   )
