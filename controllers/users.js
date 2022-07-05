@@ -108,16 +108,18 @@ module.exports.createUser = (req, res, next) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(400).send({ message: 'Не передан email или password' });
+    throw new BadRequestError('Не передан email или password');
+    // return res.status(400).send({ message: 'Не передан email или password' });
   }
   User
     .findOne({ email })
     .select('+password')
     .then((user) => {
       if (!user) {
-        const err = new Error('Неправильный email или password');
-        err.statusCode = ERROR_FORBIDDEN;
-        throw err;
+        throw new BadRequestError('Не передан email или password');
+        // const err = new Error('Неправильный email или password');
+        // err.statusCode = ERROR_FORBIDDEN;
+        // throw err;
       }
       return Promise.all([
         user,
@@ -126,9 +128,10 @@ module.exports.login = (req, res) => {
     })
     .then(([user, isPasswordCorrect]) => {
       if (!isPasswordCorrect) {
-        const err = new Error('Неправильный email или password');
-        err.statusCode = ERROR_FORBIDDEN;
-        throw err;
+        throw new BadRequestError('Не передан email или password');
+        // const err = new Error('Неправильный email или password');
+        // err.statusCode = ERROR_FORBIDDEN;
+        // throw err;
       }
       return generateToken({ email: user.email });
     })
