@@ -69,8 +69,8 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then(() => {
-      res.send({ message: 'Пользователь создан' });
+    .then((user) => {
+      res.send({ user });
     })
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_ERROR) {
