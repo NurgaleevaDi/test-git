@@ -181,6 +181,7 @@ module.exports.updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Некорректные данные'));
+        return;
         // return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка валидации данных' });
       }
       next(err);
