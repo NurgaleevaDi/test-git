@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { errors } = require('celebrate');
+const { errors, celebrate, Joi } = require('celebrate');
 const { ERROR_NOT_FOUND } = require('./errors');
 
 const app = express();
@@ -29,7 +29,17 @@ app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
 app.post('/signin', login);
-app.post('/signup', createUser);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      abouy: Joi.string().required().min(2).max(30),
+      avatar: Joi.string().required().pattern(/(https?:\/\/)(w{3}\.)?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com)))(:\d{2,5})?((\/.+)+)?\/?#?/),
+    }),
+  }),
+  createUser,
+);
 
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не существует' });
