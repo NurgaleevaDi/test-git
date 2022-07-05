@@ -1,4 +1,7 @@
 const bcrypt = require('bcrypt');
+const NotFoundError = require('../errors/not-found-error');
+const ForbiddenError = require('../errors/forbidden-error');
+const BadRequestError = require('../errors/bad-request-error');
 const {
   ERROR_BAD_REQUEST,
   ERROR_NOT_FOUND,
@@ -19,7 +22,6 @@ module.exports.getUsers = (req, res) => {
     .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' }));
 };
 module.exports.getUser = (req, res, next) => {
-  console.log('in get user');
   User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
     .catch((err) => next(err));
@@ -42,7 +44,7 @@ module.exports.getUsersId = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name,
     about,
@@ -51,9 +53,10 @@ module.exports.createUser = (req, res) => {
     password,
   } = req.body;
   if (!email || !password) {
-    const error = new Error('Не передан email или password');
-    error.statusCode = ERROR_BAD_REQUEST;
-    throw error;
+    throw new BadRequestError('Не передан email или password');
+    // const error = new Error('Не передан email или password');
+    // error.statusCode = ERROR_BAD_REQUEST;
+    // throw error;
     // return res.status(400).send({ message: 'Не передан email или password' });
   }
   bcrypt
@@ -76,7 +79,8 @@ module.exports.createUser = (req, res) => {
         return res.status(ERROR_CONFLICT).send({ meaasage: 'Email уже используется' });
       }
       // throw err;
-      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+      // return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 
   // User.create({
