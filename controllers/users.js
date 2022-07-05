@@ -24,14 +24,15 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 module.exports.getUser = (req, res, next) => {
+  // console.log('User');
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      res.send(user);
+      res.status(200).send(user);
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 module.exports.getUsersId = (req, res) => {
   User.findById(req.params.userId)
@@ -41,7 +42,13 @@ module.exports.getUsersId = (req, res) => {
         return;
       }
       // console.log(user);
-      res.send({ data: user });
+      res.send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
