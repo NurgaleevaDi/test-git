@@ -17,11 +17,11 @@ const Unauthorized = require('../errors/unauthorized');
 
 const SALT_ROUNDS = 10;
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   // console.log('ID: ', req.user.id);
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
