@@ -164,6 +164,7 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.updateUser = (req, res, next) => {
+  console.log(req.body);
   User.findByIdAndUpdate(
     req.user.id,
     { name: req.body.name, about: req.body.about },
