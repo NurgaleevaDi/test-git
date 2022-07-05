@@ -13,10 +13,16 @@ const { generateToken } = require('../helpers/jwt');
 const SALT_ROUNDS = 10;
 
 module.exports.getUsers = (req, res) => {
-  console.log('ID: ', req.user.id);
+  // console.log('ID: ', req.user.id);
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' }));
+};
+module.exports.getUser = (req, res, next) => {
+  console.log('in get user');
+  User.findById(req.user._id)
+    .then((user) => res.send({ data: user }))
+    .catch((err) => next(err));
 };
 module.exports.getUsersId = (req, res) => {
   User.findById(req.params.userId)
@@ -25,6 +31,7 @@ module.exports.getUsersId = (req, res) => {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному id не найден' });
         return;
       }
+      // console.log(user);
       res.send({ data: user });
     })
     .catch((err) => {
@@ -91,6 +98,7 @@ module.exports.login = (req, res) => {
   }
   User
     .findOne({ email })
+    .select('+password')
     .then((user) => {
       if (!user) {
         const err = new Error('Неправильный email или password');
@@ -120,6 +128,7 @@ module.exports.login = (req, res) => {
       return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
+
 module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,

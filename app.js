@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { ERROR_NOT_FOUND, ERROR_SERVER } = require('./errors');
+const { ERROR_NOT_FOUND } = require('./errors');
 
 const app = express();
 const PORT = 3000;
@@ -14,15 +14,16 @@ const { auth } = require('./middlewares/auth');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '62b2886c4145914626b0fe40',
-  };
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '62b2886c4145914626b0fe40',
+//   };
 
-  next();
-});
+//   next();
+// });
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
+
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
@@ -32,14 +33,18 @@ app.post('/signup', createUser);
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не существует' });
 });
-
+// централизованная обработка ошибок
+/* eslint-disable-next-line */
 app.use((err, req, res, next) => {
-  console.log('ERR ', err);
-  if (err.statusCode) {
-    return res.status(err.statusCode).send({ message: err.message });
-  }
-  console.error(err.stack);
-  return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+  console.log('ERROR: ', err.statusCode);
+  // если у ошибки нет статуса, выставляем 500
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      // проверяем статус и выставляем сообщение в зависимости от него
+      message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+    });
 });
 
 app.listen(PORT, () => {

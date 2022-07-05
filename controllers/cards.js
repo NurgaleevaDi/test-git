@@ -1,5 +1,12 @@
 const Card = require('../models/cards');
-const { ERROR_NOT_FOUND, ERROR_BAD_REQUEST, ERROR_SERVER } = require('../errors');
+const NotFoundError = require('../errors/not-found-error');
+const ForbiddenError = require('../errors/forbidden-error');
+// const BadRequestError = require('../errors/bad-request-error');
+const {
+  ERROR_NOT_FOUND,
+  ERROR_BAD_REQUEST,
+  ERROR_SERVER,
+} = require('../errors');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -8,7 +15,7 @@ module.exports.getCards = (req, res) => {
 };
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const owner = req.user.id;
   Card.create({
     name, link, owner,
   })
@@ -20,21 +27,19 @@ module.exports.createCard = (req, res) => {
       return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
     });
 };
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка по указанному id не найдена' });
-        return;
+        throw new NotFoundError('Карточка не найдена');
+      } else if (String(card.owner) !== String(req.user.id)) {
+        throw new ForbiddenError('Нельзя удалять чужую карточку');
+      } else {
+        card.remove()
+          .then(() => res.send({ card }));
       }
-      res.send({ data: card });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(ERROR_BAD_REQUEST).send({ message: 'Ошибка ввода данных' });
-      }
-      return res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
-    });
+    .catch((err) => next(err));
 };
 
 module.exports.likeCard = (req, res) => {
