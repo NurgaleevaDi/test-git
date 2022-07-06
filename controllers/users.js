@@ -18,6 +18,7 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 module.exports.getUser = (req, res, next) => {
+  console.log('user ', req.user);
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
@@ -110,7 +111,7 @@ module.exports.login = (req, res, next) => {
         throw new Unauthorized('Не передан email или password');
       }
       console.log(user);
-      return generateToken({ _id: user._id });
+      return generateToken({ email: user.email });
     })
     .then((token) => {
       res.send({ token });

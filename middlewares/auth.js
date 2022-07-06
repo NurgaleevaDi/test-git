@@ -22,8 +22,7 @@ const auth = (req, res, next) => {
         if (!user) {
           throwUnathorizedError();
         }
-        req.user = { payload };
-        // req.user = { id: user.id };
+        req.user = { id: user.id };
         next();
       });
   } catch (err) {
