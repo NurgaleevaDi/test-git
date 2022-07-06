@@ -1,6 +1,6 @@
 const User = require('../models/users');
 const { checkToken } = require('../helpers/jwt');
-const { ERROR_UNAUTHORIZED } = require('../errors');
+const { ERROR_UNAUTHORIZED } = require('../helpers/errors');
 
 const throwUnathorizedError = () => {
   const error = new Error('Авторизуйтесь');

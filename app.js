@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
-const { ERROR_NOT_FOUND } = require('./errors');
+const { ERROR_NOT_FOUND } = require('./helpers/errors');
 
 const app = express();
 const PORT = 3000;

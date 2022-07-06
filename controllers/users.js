@@ -4,7 +4,7 @@ const ForbiddenError = require('../errors/forbidden-error');
 const BadRequestError = require('../errors/bad-request-error');
 const {
   MONGO_DUPLICATE_ERROR,
-} = require('../errors');
+} = require('../helpers/errors');
 const User = require('../models/users');
 const { generateToken } = require('../helpers/jwt');
 const ConflictError = require('../errors/conflict-error');
