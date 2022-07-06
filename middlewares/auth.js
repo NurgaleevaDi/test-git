@@ -16,12 +16,14 @@ const auth = (req, res, next) => {
   const token = isAutorized.replace('Bearer ', '');
   try {
     const payload = checkToken(token);
+    console.log('payload: ', payload);
     User.findOne({ email: payload.email })
       .then((user) => {
         if (!user) {
           throwUnathorizedError();
         }
-        req.user = { id: user.id };
+        req.user = { payload };
+        // req.user = { id: user.id };
         next();
       });
   } catch (err) {

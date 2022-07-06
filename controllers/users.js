@@ -109,7 +109,8 @@ module.exports.login = (req, res, next) => {
       if (!isPasswordCorrect) {
         throw new Unauthorized('Не передан email или password');
       }
-      return generateToken({ email: user.email });
+      console.log(user);
+      return generateToken({ _id: user._id });
     })
     .then((token) => {
       res.send({ token });
