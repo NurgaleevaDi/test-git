@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-// const { regex } = require('../helpers/validateLink');
-const regex = /^(http|https):\/\/([\w_-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/;
+const { regex } = require('../helpers/validateLink');
+// const regex = /^(http|https):\/\/([\w_-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/;
 
 const cardSchema = new mongoose.Schema({
   name: {
