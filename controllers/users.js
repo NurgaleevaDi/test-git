@@ -18,7 +18,6 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 module.exports.getUser = (req, res, next) => {
-  console.log('user ', req.user);
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
@@ -81,7 +80,9 @@ module.exports.createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.code === MONGO_DUPLICATE_ERROR) {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Ошибка ввода данных'));
+      } else if (err.code === MONGO_DUPLICATE_ERROR) {
         next(new ConflictError('Email уже используется'));
         return;
       }
