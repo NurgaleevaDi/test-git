@@ -3,7 +3,7 @@ const isEmail = require('validator/lib/isEmail');
 // const isURL = require('validator/lib/isURL');
 // const validateLink = require('../helpers/validateLink');
 
-const { regex } = require('../helpers/validateLink');
+const { validateLink } = require('../helpers/validateLink');
 // const regex = /(https?:\/\/)(w{3}\.)
 // ?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com|net)))(:\d{2,5})?((\/.+)+)?\/?#?/;
 
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     // required: [true, 'Необходимо ввести ссылку на аватар'],
     validate: {
-      validator: (v) => regex.test(v),
+      validator: (v) => validateLink.test(v),
       message: 'Неправильный формат ссылки',
     },
   },

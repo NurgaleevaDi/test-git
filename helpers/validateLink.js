@@ -1,2 +1,1 @@
-const validateLink = /^(http|https):\/\/([\w_-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/;
-module.exports = { validateLink };
+module.exports.validateLink = /^(http|https):\/\/([\w_-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/;

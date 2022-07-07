@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { regex } = require('../helpers/validateLink');
+const { validateLink } = require('../helpers/validateLink');
 // const regex = /^(http|https):\/\/([\w_-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/;
 
 const cardSchema = new mongoose.Schema({
@@ -17,7 +17,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => regex.test(v),
+      validator: (v) => validateLink.test(v),
       message: 'Неправильный формат ссылки',
     },
     // required: [true, 'Необходимо ввести ссылку'],
