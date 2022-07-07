@@ -80,7 +80,7 @@ module.exports.createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         next(new BadRequestError('Ошибка ввода данных'));
       } else if (err.code === MONGO_DUPLICATE_ERROR) {
         next(new ConflictError('Email уже используется'));
