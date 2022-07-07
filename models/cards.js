@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const validateLink = require('../helpers/validateLink');
+const { RegExp } = require('../helpers/validateLink');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -16,7 +16,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => validateLink.test(v),
+      validator: (v) => RegExp.test(v),
       message: 'Неправильный формат ссылки',
     },
     // required: [true, 'Необходимо ввести ссылку'],
