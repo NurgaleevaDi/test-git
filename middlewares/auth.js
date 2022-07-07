@@ -14,20 +14,25 @@ const auth = (req, res, next) => {
   }
 
   const token = isAutorized.replace('Bearer ', '');
+  let payload; // +
   try {
-    const payload = checkToken(token);
+    payload = checkToken(token);
+    // const payload = checkToken(token);
     console.log('payload: ', payload);
-    User.findOne({ email: payload.email })
-      .then((user) => {
-        if (!user) {
-          throwUnathorizedError();
-        }
-        req.user = { id: user.id };
-        next();
-      });
+    // User.findOne({ email: payload.email })
+    //   .then((user) => {
+    //     if (!user) {
+    //       throwUnathorizedError();
+    //     }
+    //     req.user = payload;
+    //     // req.user = { id: user.id };
+    //     next();
+    //   });
   } catch (err) {
     throwUnathorizedError();
   }
+  req.user = payload;
+  return next();
 };
 
 module.exports = { auth };

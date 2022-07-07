@@ -110,8 +110,8 @@ module.exports.login = (req, res, next) => {
       if (!isPasswordCorrect) {
         throw new Unauthorized('Не передан email или password');
       }
-      console.log(user);
-      return generateToken({ email: user.email });
+      return generateToken({ _id: user._id });
+      // return generateToken({ email: user.email });
     })
     .then((token) => {
       res.send({ token });
@@ -126,7 +126,7 @@ module.exports.login = (req, res, next) => {
 
 module.exports.updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
-    req.user.id,
+    req.user._id,
     { name: req.body.name, about: req.body.about },
     { new: true, runValidators: true },
   )
@@ -146,7 +146,7 @@ module.exports.updateUser = (req, res, next) => {
 };
 module.exports.updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
-    req.user.id,
+    req.user._id,
     { avatar: req.body.avatar },
     { new: true, runValidators: true },
   )
