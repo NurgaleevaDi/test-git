@@ -1,4 +1,4 @@
-const User = require('../models/users');
+// const User = require('../models/users');
 const { checkToken } = require('../helpers/jwt');
 const { ERROR_UNAUTHORIZED } = require('../helpers/errors');
 
@@ -18,7 +18,6 @@ const auth = (req, res, next) => {
   try {
     payload = checkToken(token);
     // const payload = checkToken(token);
-    console.log('payload: ', payload);
     // User.findOne({ email: payload.email })
     //   .then((user) => {
     //     if (!user) {
