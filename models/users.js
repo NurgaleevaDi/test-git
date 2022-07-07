@@ -3,7 +3,7 @@ const isEmail = require('validator/lib/isEmail');
 // const isURL = require('validator/lib/isURL');
 // const validateLink = require('../helpers/validateLink');
 
-const regex = /^(http|https):\/\/([\w_-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/;
+const { regex } = require('../helpers/validateLink');
 // const regex = /(https?:\/\/)(w{3}\.)
 // ?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com|net)))(:\d{2,5})?((\/.+)+)?\/?#?/;
 
