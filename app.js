@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
-const { ERROR_NOT_FOUND } = require('./helpers/errors');
+const NotFoundError = require('./errors/not-found-error');
 
 const app = express();
 const PORT = 3000;
@@ -44,9 +44,8 @@ app.post(
   createUser,
 );
 
-app.use((req, res) => {
-  res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не существует' });
-});
+app.use('/*', (req, res, next) => next(new NotFoundError('Запрашиваемая страница не существует')));
+// res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не существует' });
 
 app.use(errors());
 // централизованная обработка ошибок

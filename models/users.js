@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
 // const isURL = require('validator/lib/isURL');
-const validateLink = require('../helpers/validateLink');
+// const validateLink = require('../helpers/validateLink');
 
 const regex = /^(http|https):\/\/([\w_-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/;
 // const regex = /(https?:\/\/)(w{3}\.)
