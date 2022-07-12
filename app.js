@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
 const NotFoundError = require('./errors/not-found-error');
+const { requestLogger, errorLogger } = require('./middlewares/loggers');
 
 const app = express();
 const PORT = 3000;
@@ -16,6 +17,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
+
+app.use(requestLogger); // подключаем логгер запросов до обработчиков роутов
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
@@ -43,11 +46,12 @@ app.post(
   }),
   createUser,
 );
+app.use(errorLogger); // подключаем логгер ошибок после обработчиков роутов и до обработчиков ошибок
 
 app.use('/*', (req, res, next) => next(new NotFoundError('Запрашиваемая страница не существует')));
-// res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не существует' });
 
-app.use(errors());
+app.use(errors()); // обработчик ошибок celebrate
+
 // централизованная обработка ошибок
 /* eslint-disable-next-line */
 app.use((err, req, res, next) => {
